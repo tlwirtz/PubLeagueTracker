@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+@foreach (var league in Model.Leagues)
+{
+    <h2>@league.Name</h2>
+    @if (league.Seasons?.Count > 0)
+    {
+       @foreach (var season in league.Seasons)
+       {
+           <h3>@season.Name</h3>
+       }
+     }
+}
