@@ -1,0 +1,70 @@
+﻿@model PubLeagueTracker.Models.ViewModels.Teams.CreateUpdateTeamViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Team</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Team.TeamId" />
+            @*<div class="form-group">
+                    <label asp-for="Team.SeasonId" class="control-label"></label>
+                    <select asp-for="Team.SeasonId" class="form-control" asp-items="ViewBag.SeasonId"></select>
+                    <span asp-validation-for="Team.SeasonId" class="text-danger"></span>
+                </div>*@
+            <div class="form-group">
+                <label asp-for="@Model.Leagues" class="control-label"></label>
+                <select id="LeagueList" class="form-control" asp-items="@(new SelectList(Model.Leagues, "LeagueId", "Name", Model.Team.Season.LeagueId))"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Team.SeasonId" class="control-label"></label>
+                <select id="SeasonList" asp-for="Team.SeasonId" class="form-control" asp-items="@(new SelectList(Model.Seasons, "SeasonId", "Name", Model.Team.SeasonId))"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Team.Name" class="control-label"></label>
+                <input asp-for="Team.Name" class="form-control" />
+                <span asp-validation-for="Team.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        {
+            document.addEventListener("DOMContentLoaded", function () {
+                $('#LeagueList').change(function () {
+                    const url = '@Url.Content("~/")' + "Teams/GetSeasonsByLeagueId";
+                    const leagueId = $('#LeagueList')
+
+                    $.getJSON(url, { id: leagueId.val() }, function (data) {
+
+                        let items = '';
+                        $('#SeasonList').empty();
+                        $.each(data, function (idx, season) {
+                            items += `<option value=${season.value}>${season.text}</option>`
+                        })
+
+                        $('#SeasonList').html(items);
+                    })
+                })
+            })
+
+
+        }
+    </script>
+}

@@ -9,6 +9,7 @@ namespace PubLeagueTracker.Models
         public int SeasonId { get; set; }
         public string Name { get; set; }
 
+        public Season Season { get; set; }
         public IEnumerable<MatchDetail> Matches { get; set; }
     }
 }

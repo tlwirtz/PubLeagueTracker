@@ -14,6 +14,7 @@ namespace PubLeagueTracker.Models.Data
         public DbSet<Season> Seasons { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<Match> Matches { get; set; }
+        public DbSet<MatchDetail> MatchDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +22,7 @@ namespace PubLeagueTracker.Models.Data
             modelBuilder.Entity<Season>().ToTable("Season");
             modelBuilder.Entity<Team>().ToTable("Team");
             modelBuilder.Entity<Match>().ToTable("Match");
+            modelBuilder.Entity<MatchDetail>().ToTable("MatchDetail");
         }
     }
 }
