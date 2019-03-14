@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PubLeagueTracker.Models;
 using PubLeagueTracker.Models.Data;
+using PubLeagueTracker.Models.ViewModels.Matches;
 
 namespace PubLeagueTracker.Controllers
 {
@@ -22,7 +23,12 @@ namespace PubLeagueTracker.Controllers
         // GET: Matches
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Matches.ToListAsync());
+            return View(await _context.Matches
+                .Include(m => m.Season)
+                .ThenInclude(s => s.League)
+                .Include(m => m.MatchDetail)
+                .ThenInclude(md => md.Team)
+                .ToListAsync());
         }
 
         // GET: Matches/Details/5
@@ -34,7 +40,12 @@ namespace PubLeagueTracker.Controllers
             }
 
             var match = await _context.Matches
+                .Include(m => m.Season)
+                .ThenInclude(s => s.League)
+                .Include(m => m.MatchDetail)
+                .ThenInclude(md => md.Team)
                 .FirstOrDefaultAsync(m => m.MatchId == id);
+
             if (match == null)
             {
                 return NotFound();
@@ -44,9 +55,22 @@ namespace PubLeagueTracker.Controllers
         }
 
         // GET: Matches/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var leagues = await _context.Leagues.ToListAsync();
+            var seasons = await _context.Seasons
+                .Include(s => s.Teams)
+                .Where(m => m.LeagueId == leagues.First().LeagueId)
+                .ToListAsync();
+            
+
+            var view = new CreateEditMatchViewModel()
+            {
+                Seasons = seasons,
+                Leagues = leagues
+            };
+
+            return View(view);
         }
 
         // POST: Matches/Create
@@ -54,7 +78,7 @@ namespace PubLeagueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MatchId,SeasonId,MatchDate")] Match match)
+        public async Task<IActionResult> Create([Bind("MatchId,SeasonId,MatchDate,Location,MatchDetail")] Match match)
         {
             if (ModelState.IsValid)
             {

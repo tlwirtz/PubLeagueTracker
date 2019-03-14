@@ -1,10 +1,11 @@
 ﻿@model IEnumerable<PubLeagueTracker.Models.Match>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Matches";
 }
 
-<h1>Index</h1>
+<h1>Matches</h1>
+<p><strong>TODO: </strong>These should be grouped by League and Season</p>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -15,6 +16,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.MatchDate)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Location)
+            </th>
+            <th>
+                Home Team
+            </th>
+            <th>
+                Away Team
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -23,6 +33,15 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.MatchDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MatchDetail.Where(md => md.IsHomeTeam).FirstOrDefault().Team.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MatchDetail.Where(md => !md.IsHomeTeam).FirstOrDefault().Team.Name)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.MatchId">Edit</a> |

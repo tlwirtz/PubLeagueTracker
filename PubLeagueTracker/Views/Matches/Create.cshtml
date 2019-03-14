@@ -1,26 +1,58 @@
-﻿@model PubLeagueTracker.Models.Match
+﻿@model PubLeagueTracker.Models.ViewModels.Matches.CreateEditMatchViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create A Match";
 }
 
-<h1>Create</h1>
+<h1>Create A Match</h1>
 
 <h4>Match</h4>
+<p>
+    <strong>TODOs:</strong>
+    <ol>
+        <li>Build custom validator so that home and away team are not the same. - https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-2.2</li>
+        <li>Tidy up the UI. Maybe get some mockups.</li>
+    </ol>
+</p>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="SeasonId" class="control-label"></label>
-                <select asp-for="SeasonId" class ="form-control" asp-items="ViewBag.SeasonId"></select>
+                <label asp-for="@Model.Leagues" class="control-label"></label>
+                <select id="LeagueList" class="form-control" asp-items="@(new SelectList(Model.Leagues, "LeagueId", "Name"))"></select>
             </div>
             <div class="form-group">
-                <label asp-for="MatchDate" class="control-label"></label>
-                <input asp-for="MatchDate" class="form-control" />
-                <span asp-validation-for="MatchDate" class="text-danger"></span>
+                <label asp-for="Match.Season" class="control-label"></label>
+                <select id="SeasonList" asp-for="Match.SeasonId" class="form-control" asp-items="@(new SelectList(Model.Seasons, "SeasonId", "Name"))"></select>
             </div>
+            <div class="form-group">
+                <label asp-for="Match.MatchDate" class="control-label"></label>
+                <input asp-for="Match.MatchDate" class="form-control" />
+                <span asp-validation-for="Match.MatchDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Match.Location" class="control-label"></label>
+                <input asp-for="Match.Location" class="form-control" />
+                <span asp-validation-for="Match.Location" class="text-danger"></span>
+            </div>
+
+            <div class="TODO--HideIfNoTeamsSelected">
+                <h4>Home Team</h4>
+                <input type="hidden" asp-for="Match.MatchDetail.First().IsHomeTeam" name="Match.MatchDetail[0].IsHomeTeam" value="true" />
+                <div class="from-group">
+                    <label asp-for="Match.MatchDetail.First().Team.Name" class="control-label"></label>
+                    <select id="HomeTeamList" asp-for="Match.MatchDetail.First().Team.Name" name="Match.MatchDetail[0].TeamId" class="form-control" asp-items="@(new SelectList(Model.Seasons.First().Teams, "TeamId", "Name"))"></select>
+                </div>
+                <h4>Away Team</h4>
+                <div class="from-group">
+                    <label asp-for="Match.MatchDetail.First().Team.Name" class="control-label"></label>
+                    <select id="AwayTeamList" asp-for="Match.MatchDetail.First().Team.Name" name="Match.MatchDetail[1].TeamId" class="form-control" asp-items="@(new SelectList(Model.Seasons.First().Teams, "TeamId", "Name"))"></select>
+                </div>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -34,4 +66,65 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        {
+            /*  
+             *  FLOW CONTROL
+             *  1. If League changes, grab all seasons for league and set season to empty.
+             *  2. If Season is empty, so should Teams. Both should show "Select..."
+             *  3. When Season changes, grab all Teams for that season
+             *  4. Default is to pick first League & first Season and display appropriate teams
+             */
+
+            const getDefaultOption = () => `<option value=0>Select...</option>`;
+
+            const getSeasonsByLeague = (leagueElm, url) => {
+                $.getJSON(url, { id: leagueElm.val() }, function (data) {
+                    $('#SeasonList').empty();
+                    let items = getDefaultOption();
+
+                    $.each(data, function (idx, season) {
+                        items += `<option value=${season.value}>${season.text}</option>`
+                    })
+
+                    $('#SeasonList').html(items);
+                })
+            };
+
+            const getTeamsBySeason = (seasonElm, url) => {
+                $.getJSON(url, { id: seasonElm.val() }, function (data) {
+                    $('#HomeTeamList').empty();
+                    $('#AwayTeamList').empty();
+
+                    let items = getDefaultOption();
+                    $.each(data, function (idx, team) {
+                        items += `<option value=${team.value}>${team.text}</option>`
+                    })
+
+                    $('#HomeTeamList').html(items);
+                    $('#AwayTeamList').html(items);
+                })
+            };
+
+            document.addEventListener("DOMContentLoaded", function () {
+                $('#LeagueList').change(function () {
+                    const url = '@Url.Content("~/")' + "Teams/GetSeasonsByLeagueId";
+                    const leagueElm = $('#LeagueList')
+
+                    getSeasonsByLeague(leagueElm, url);
+                    $('#HomeTeamList').html(getDefaultOption());
+                    $('#AwayTeamList').html(getDefaultOption());
+
+                })
+
+                $('#SeasonList').change(function() {
+                    const url = '@Url.Content("~/")' + "Teams/GetTeamsBySeasonId";
+                    const seasonElm = $('#SeasonList');
+
+                    getTeamsBySeason(seasonElm, url);
+                })
+            })
+        }
+    </script>
 }
+
