@@ -8,8 +8,10 @@ namespace PubLeagueTracker.Models
     {
         public int MatchId { get; set; }
         public int SeasonId { get; set; }
+        public string Location { get; set; }
         public DateTime MatchDate { get; set; }
 
+        public Season Season { get; set; }
         public List<MatchDetail> MatchDetail { get; set; }
     }
 
