@@ -180,6 +180,23 @@ namespace PubLeagueTracker.Controllers
             return Json(new SelectList(seasons, "SeasonId", "Name"));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetTeamsBySeasonId(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var teams = await _context.Teams.Where(t => t.SeasonId == id).ToListAsync();
+            if  (teams.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Json(new SelectList(teams, "TeamId", "Name"));
+        }
+
         private bool TeamExists(int id)
         {
             return _context.Teams.Any(e => e.TeamId == id);
