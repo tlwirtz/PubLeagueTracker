@@ -5,6 +5,12 @@
 }
 
 <h1>Matches</h1>
+<p><strong>TODOS:</strong></p>
+<ol>
+    <li>(stretch) Group by League and Season</li>
+    <li>(stretch) Sort by Match Date</li>
+    <li>(stretch)Make filterable by League and Season </li>
+</ol>
 <p><strong>TODO: </strong>These should be grouped by League and Season</p>
 
 <p>
@@ -17,6 +23,12 @@
                 @Html.DisplayNameFor(model => model.MatchDate)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Season.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Season.League.Name)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Location)
             </th>
             <th>
@@ -25,30 +37,38 @@
             <th>
                 Away Team
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.MatchDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Location)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MatchDetail.Where(md => md.IsHomeTeam).FirstOrDefault().Team.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MatchDetail.Where(md => !md.IsHomeTeam).FirstOrDefault().Team.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MatchId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MatchId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MatchId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MatchDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Season.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Season.League.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MatchDetail.Where(md => md.IsHomeTeam).FirstOrDefault().Team.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MatchDetail.Where(md => !md.IsHomeTeam).FirstOrDefault().Team.Name)
+                </td>
+            </tr>
+            <tr>
+                <td class="matchList-noTopBorder">
+                    <a asp-action="Edit" asp-route-id="@item.MatchId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.MatchId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.MatchId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
