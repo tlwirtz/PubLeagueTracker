@@ -97,11 +97,19 @@ namespace PubLeagueTracker.Controllers
                 return NotFound();
             }
 
-            var match = await _context.Matches.FindAsync(id);
+            var match = _context.Matches
+                .Include(m => m.Season)
+                    .ThenInclude(s =>  s.Teams)
+                .Include(m => m.MatchDetail)
+                    .ThenInclude(md => md.Team)
+                .Where(m => m.MatchId == id)
+                .First();
+
             if (match == null)
             {
                 return NotFound();
             }
+
             return View(match);
         }
 
@@ -110,7 +118,7 @@ namespace PubLeagueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MatchId,SeasonId,MatchDate")] Match match)
+        public async Task<IActionResult> Edit(int id, [Bind("MatchId,SeasonId,MatchDate,Location,MatchDetail,Season")] Match match)
         {
             if (id != match.MatchId)
             {
@@ -137,6 +145,17 @@ namespace PubLeagueTracker.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            //we don't pass the season information along, so go get it again.
+            if (match.Season == null)
+            {
+                match.Season = _context.Matches
+                    .Include(m => m.Season)
+                        .ThenInclude(s => s.Teams)
+                    .Where(m => m.MatchId == id)
+                    .First().Season;
+            }
+
             return View(match);
         }
 
