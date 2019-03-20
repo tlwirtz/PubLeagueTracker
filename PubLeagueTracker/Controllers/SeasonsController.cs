@@ -44,7 +44,7 @@ namespace PubLeagueTracker.Controllers
         public async Task<IActionResult> Create()
         {
             var leagues = await _context.Leagues.ToListAsync();
-            var view = new SeasonEditViewModel()
+            var view = new CreateEditSeasonViewModel()
             {
                 Leagues = leagues
             };
@@ -84,7 +84,7 @@ namespace PubLeagueTracker.Controllers
                 return NotFound();
             }
 
-            var view = new SeasonEditViewModel()
+            var view = new CreateEditSeasonViewModel()
             {
                 Season = season,
                 Leagues = leagues,

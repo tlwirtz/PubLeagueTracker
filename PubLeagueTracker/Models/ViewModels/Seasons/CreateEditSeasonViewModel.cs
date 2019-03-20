@@ -2,7 +2,7 @@
 
 namespace PubLeagueTracker.Models.ViewModels
 {
-    public class SeasonEditViewModel
+    public class CreateEditSeasonViewModel
     {
         public Season Season { get; set; }
         public IEnumerable<League> Leagues { get; set; }
