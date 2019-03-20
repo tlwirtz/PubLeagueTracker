@@ -40,8 +40,6 @@ namespace PubLeagueTracker.Controllers
             }
 
             var match = await _context.Matches
-                .Include(m => m.Season)
-                .ThenInclude(s => s.League)
                 .Include(m => m.MatchDetail)
                 .ThenInclude(md => md.Team)
                 .FirstOrDefaultAsync(m => m.MatchId == id);
@@ -51,7 +49,18 @@ namespace PubLeagueTracker.Controllers
                 return NotFound();
             }
 
-            return View(match);
+            var view = new MatchDetailsViewModel()
+            {
+                MatchId = match.MatchId,
+                MatchDate = match.MatchDate,
+                Location = match.Location,
+                HomeTeam = match.MatchDetail.Where(md => md.IsHomeTeam).First().Team,
+                HomeScore = match.MatchDetail.Where(md => md.IsHomeTeam).First().Score,
+                AwayTeam = match.MatchDetail.Where(md => !md.IsHomeTeam).First().Team,
+                AwayScore = match.MatchDetail.Where(md => !md.IsHomeTeam).First().Score
+            };
+
+            return View(view);
         }
 
         // GET: Matches/Create

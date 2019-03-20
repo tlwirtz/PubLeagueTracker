@@ -1,21 +1,32 @@
-﻿@model PubLeagueTracker.Models.Match
+﻿@model PubLeagueTracker.Models.ViewModels.Matches.MatchDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
+    
 }
 
-<h1>Details</h1>
+<h1>@Model.HomeTeam.Name vs @Model.AwayTeam.Name</h1>
 
 <div>
-    <h4>Match</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">@Model.HomeTeam.Name (Home)</dt>
+        <dd class="col-sm-10">@Model.HomeScore</dd>
+        <dt class="col-sm-2">@Model.AwayTeam.Name (Away)</dt>
+        <dd class="col-sm-10">@Model.AwayScore</dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.MatchDate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Location)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.MatchDate)
         </dd>
+
     </dl>
 </div>
 <div>
