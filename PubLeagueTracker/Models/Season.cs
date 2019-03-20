@@ -11,6 +11,7 @@ namespace PubLeagueTracker.Models
         public int LeagueId { get; set; }
         [Required]
         public string Name { get; set; }
+        [Display(Name = "Is this the current season?")]
         public bool IsActive { get; set; }
 
         public League League { get; set; }

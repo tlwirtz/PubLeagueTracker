@@ -41,9 +41,15 @@ namespace PubLeagueTracker.Controllers
         }
 
         // GET: Seasons/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var leagues = await _context.Leagues.ToListAsync();
+            var view = new SeasonEditViewModel()
+            {
+                Leagues = leagues
+            };
+
+            return View(view);
         }
 
         // POST: Seasons/Create
@@ -51,7 +57,7 @@ namespace PubLeagueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SeasonId,LeagueId,Name")] Season season)
+        public async Task<IActionResult> Create([Bind("SeasonId,LeagueId,Name,IsActive")] Season season)
         {
             if (ModelState.IsValid)
             {
@@ -92,7 +98,7 @@ namespace PubLeagueTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SeasonId,LeagueId,Name")] Season season)
+        public async Task<IActionResult> Edit(int id, [Bind("SeasonId,LeagueId,Name,IsActive")] Season season)
         {
             if (id != season.SeasonId)
             {
