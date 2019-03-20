@@ -11,6 +11,7 @@ namespace PubLeagueTracker.Models
         public int LeagueId { get; set; }
         [Required]
         public string Name { get; set; }
+        public bool IsActive { get; set; }
 
         public League League { get; set; }
         public IEnumerable<Match> Matches { get; set; }
