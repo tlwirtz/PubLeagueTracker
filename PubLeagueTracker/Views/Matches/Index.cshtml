@@ -1,74 +1,92 @@
-﻿@model IEnumerable<PubLeagueTracker.Models.Match>
+﻿@model PubLeagueTracker.Models.ViewModels.Matches.MatchIndexViewModel
 
 @{
     ViewData["Title"] = "Matches";
 }
 
-<h1>Matches</h1>
-<p><strong>TODOS:</strong></p>
-<ol>
-    <li>(stretch) Group by League and Season</li>
-    <li>(stretch) Sort by Match Date</li>
-    <li>(stretch)Make filterable by League and Season </li>
-</ol>
-<p><strong>TODO: </strong>These should be grouped by League and Season</p>
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <h1>Matches</h1>
+        </div>
+        <div class="col-6">
+            <p>
+                <a asp-action="Create">Create New</a>
+            </p>
+        </div>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.MatchDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Season.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Season.League.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Location)
-            </th>
-            <th>
-                Home Team
-            </th>
-            <th>
-                Away Team
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="container">
+    <div class="row">
+        <form asp-action="Index" method="get" class="form-inline">
+            <div class="form-group">
+                <label for="TeamList">Filter Team</label>
+                <select id="TeamList" class="form-control mx-sm-3" asp-for="TeamId" asp-items="@(new SelectList(Model.Teams, "TeamId", "Name"))"></select>
+                <button type="submit" value="Filter" class="btn btn-primary">Filter</button>
+            </div>
+        </form>
+    </div>
+    <div class="row mt-2"   >
+        <form asp-action="Index" method="get" class="form">
+            <input name="TeamList" type="hidden" id="0" />
+            <button type="submit" value="Clear Filter" class="btn btn-secondary mb-2">Clear Filters</button>
+        </form>
+    </div>
+</div>
+
+
+@foreach (var season in Model.Matches)
+{
+    <h2 class="display-4">@season.Key.League.Name</h2>
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MatchDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Season.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Season.League.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Location)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MatchDetail.Where(md => md.IsHomeTeam).FirstOrDefault().Team.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MatchDetail.Where(md => !md.IsHomeTeam).FirstOrDefault().Team.Name)
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => season.Key.Matches.First().MatchDate)
+                </th>
+                <th>
+                    Season
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => season.Key.Matches.First().Location)
+                </th>
+                <th>
+                    Home Team
+                </th>
+                <th>
+                    Away Team
+                </th>
+                <th>Actions</th>
             </tr>
-            <tr>
-                <td class="matchList-noTopBorder">
-                    <a asp-action="Edit" asp-route-id="@item.MatchId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.MatchId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.MatchId">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var match in season)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => match.MatchDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => match.Season.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => match.Location)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => match.MatchDetail.Where(md => md.IsHomeTeam).FirstOrDefault().Team.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => match.MatchDetail.Where(md => !md.IsHomeTeam).FirstOrDefault().Team.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@match.MatchId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@match.MatchId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@match.MatchId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
