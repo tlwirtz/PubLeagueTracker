@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubLeagueTracker.Models;
 using PubLeagueTracker.Models.Data;
 using PubLeagueTracker.Models.ViewModels.Matches;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PubLeagueTracker.Controllers
 {
@@ -21,14 +18,28 @@ namespace PubLeagueTracker.Controllers
         }
 
         // GET: Matches
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? teamId)
         {
-            return View(await _context.Matches
+            var data = await _context.Matches
                 .Include(m => m.Season)
                 .ThenInclude(s => s.League)
                 .Include(m => m.MatchDetail)
                 .ThenInclude(md => md.Team)
-                .ToListAsync());
+                .OrderBy(match => match.MatchDate)
+                .ToListAsync();
+
+            if (teamId != null && teamId > 0)
+            {
+                data = data.Where(match => match.MatchDetail.Where(md => md.TeamId == teamId).Any()).ToList();
+            }
+
+            var view = new MatchIndexViewModel()
+            {
+                Matches = data.GroupBy(match => match.Season),
+                Teams = await _context.Teams.ToListAsync()
+            };
+
+            return View(view);
         }
 
         // GET: Matches/Details/5
@@ -71,7 +82,7 @@ namespace PubLeagueTracker.Controllers
                 .Include(s => s.Teams)
                 .Where(m => m.LeagueId == leagues.First().LeagueId)
                 .ToListAsync();
-            
+
 
             var view = new CreateEditMatchViewModel()
             {
@@ -108,7 +119,7 @@ namespace PubLeagueTracker.Controllers
 
             var match = _context.Matches
                 .Include(m => m.Season)
-                    .ThenInclude(s =>  s.Teams)
+                    .ThenInclude(s => s.Teams)
                 .Include(m => m.MatchDetail)
                     .ThenInclude(md => md.Team)
                 .Where(m => m.MatchId == id)

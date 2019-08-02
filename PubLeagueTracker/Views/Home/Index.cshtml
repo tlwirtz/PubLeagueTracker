@@ -2,8 +2,56 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Pub League Match Tracker</h1>
-    
+<div class="container">
+
+    <div class="text-center">
+        <div class="row">
+            <h1 class="display-4 my-3">Season Standings</h1>
+        </div>
+
+        @foreach (var leagueStat in Model)
+        {
+            @foreach (var seasonStat in leagueStat.SeasonStats)
+            {
+                @if (seasonStat.TeamStats.Count > 0)
+                {
+                    <div class="row">
+                        <h4 class="text-left">@leagueStat.League.Name</h4>
+                    </div>
+                    <div class="row">
+                        <h4 class="text-left">@seasonStat.Season.Name</h4>
+                    </div>
+
+                    <div class="row my-4">
+                        <table class="table table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th style="width: 20%">Team</th>
+                                    <th style="width: 10%">Points</th>
+                                    <th style="width: 10%">Wins</th>
+                                    <th style="width: 10%">Losses</th>
+                                    <th style="width: 10%">Draws</th>
+                                    <th style="width: 10%">Games Played</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var teamStats in seasonStat.TeamStats)
+                                {
+                                    <tr>
+                                        <td>@teamStats.TeamName</td>
+                                        <td>@teamStats.Points</td>
+                                        <td>@teamStats.Wins</td>
+                                        <td>@teamStats.Losses</td>
+                                        <td>@teamStats.Draws</td>
+                                        <td>@teamStats.GamesPlayed</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            }
+        }
+    </div>
 </div>
 
