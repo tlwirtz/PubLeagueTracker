@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using PubLeagueTracker.Models;
 
 namespace PubLeagueTracker.Models.Data
 {
@@ -24,5 +25,7 @@ namespace PubLeagueTracker.Models.Data
             modelBuilder.Entity<Match>().ToTable("Match");
             modelBuilder.Entity<MatchDetail>().ToTable("MatchDetail");
         }
+
+        public DbSet<PlayerProfile> PlayerProfile { get; set; }
     }
 }
