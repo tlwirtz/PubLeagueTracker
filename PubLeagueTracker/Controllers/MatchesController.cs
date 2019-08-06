@@ -106,7 +106,21 @@ namespace PubLeagueTracker.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(match);
+
+            var leagues = await _context.Leagues.ToListAsync();
+            var seasons = await _context.Seasons
+                .Include(s => s.Teams)
+                .Where(m => m.LeagueId == leagues.First().LeagueId)
+                .ToListAsync();
+
+            var view = new CreateEditMatchViewModel()
+            {
+                Seasons = seasons,
+                Leagues = leagues,
+                Match = match
+            };
+
+            return View(view);
         }
 
         // GET: Matches/Edit/5

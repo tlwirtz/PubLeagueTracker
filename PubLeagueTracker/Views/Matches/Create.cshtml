@@ -45,11 +45,14 @@
                 <input type="hidden" asp-for="Match.MatchDetail.First().IsHomeTeam" name="Match.MatchDetail[0].IsHomeTeam" value="true" />
                 <div class="form-group">
                     <select id="HomeTeamList" asp-for="Match.MatchDetail.First().Team.Name" name="Match.MatchDetail[0].TeamId" class="form-control" asp-items="@(new SelectList(Model.Seasons.First().Teams, "TeamId", "Name"))"></select>
-                    <span asp-validation-for="Match.MatchDetail" class="text-danger"></span>
+                    <span asp-validation-for="Match.MatchDetail[0]" class="text-danger"></span>
                 </div>
                 <label class="control-label">Away Team</label>
                 <div class="form-group">
                     <select id="AwayTeamList" asp-for="Match.MatchDetail.First().Team.Name" name="Match.MatchDetail[1].TeamId" class="form-control" asp-items="@(new SelectList(Model.Seasons.First().Teams, "TeamId", "Name"))"></select>
+                    <span asp-validation-for="Match.MatchDetail[1].TeamId" class="text-danger"></span>
+                </div>
+                <div>
                     <span asp-validation-for="Match.MatchDetail" class="text-danger"></span>
                 </div>
             </div>
