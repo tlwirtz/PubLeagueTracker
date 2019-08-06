@@ -22,10 +22,6 @@ namespace PubLeagueTracker.Models
 
         public List<MatchDetail> MatchDetail { get; set; }
 
-        //This works as expected when "editing" the match. But does not work as expected when creating a match
-        //because we are using a view model, not the actual data model.
-        //When creating, the view model is still flagged is "invalid" but we lose the errors when re-directing. 
-        //Might need to extend the view model with IValidateObject, or find a way to pass the errors through to the view model
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (MatchDetail.Count != 2)
